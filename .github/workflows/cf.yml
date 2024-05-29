@@ -11,7 +11,7 @@ jobs:
           submodules: recursive
       - name: Build
         run: |
-          cmake -H. -B_build
+          cmake -H. -B_build -DTEST=ON
           cmake --build _build
           cmake --build _build --target test -- ARGS=--verbose
       - name: Report to Coveralls

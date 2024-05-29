@@ -19,8 +19,6 @@ jobs:
         run: docker build -t builder .
       - name: Run
         run: docker run --name test -t builder ls
-      - name: Check
-        run: pwd; ls -la
       - name: Docker log
         run: docker cp test:/repo/log.txt ./log.txt
 
@@ -28,5 +26,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rep
-          path: /home/runner/work/LR_8/LR_8/log.txt
+          path: /home/runner/work/lab_work_8/lab_work_8/log.txt
 

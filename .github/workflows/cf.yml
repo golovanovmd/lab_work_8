@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: at1
-          path: _build/bank_lib-*
+          path: _build/bank-*
   wf:
     runs-on: windows-latest
     steps:
@@ -52,7 +52,7 @@ jobs:
           submodules: recursive
       - name: Build
         run: |
-          cmake -S D:/a/LR_6/LR_6 -B D:/a/LR_6/LR_6/_build
+          cmake -S D:/a/lab_work_6/lab_work_6 -B D:/a/lab_work_6/lab_work_6/_build
           cmake --build _build
       - name: Make art
         run: |
@@ -64,5 +64,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: at2
-          path: _build/bank_lib-*
+          path: _build/bank-*
 

@@ -19,6 +19,8 @@ jobs:
         run: docker build -t builder .
       - name: Run
         run: docker run --name test -t builder ls
+      - name: Check
+        run: pwd; ls -la
       - name: Docker log
         run: docker cp test:/repo/log.txt ./log.txt
 

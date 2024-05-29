@@ -1,68 +1,30 @@
-name: Run
-run-name: R
+name: Docker
+run-name: Docker_run
 on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: apt-get docker.io
+        run: |
+          sudo apt-get remove containerd.io
+          sudo apt install docker.io docker-compose -y
+
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Build
-        run: |
-          cmake -H. -B_build -DTEST=ON
-          cmake --build _build
-          cmake --build _build --target test -- ARGS=--verbose
-      - name: Report to Coveralls
-        uses: threeal/gcovr-action@v1.0.0
-        with:
-          excludes: third-party
-          coveralls-send: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-  lf:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Build
-        run: |
-          cmake -H. -B_build
-          cmake --build _build
-      - name: packages
-        run: |
-          cd _build
-          cpack -G "TGZ"          
-          cpack -G "DEB"
-          cpack -G "RPM"
-          cd ..
-      - name: Load
+
+      - name: Build Docker
+        run: docker build -t builder .
+      - name: Run
+        run: docker run --name test -t builder ls
+      - name: Docker log
+        run: docker cp test:/repo/log.txt ./log.txt
+
+      - name: Upload_art
         uses: actions/upload-artifact@v4
         with:
-          name: at1
-          path: _build/bank-*
-  wf:
-    runs-on: windows-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Build
-        run: |
-          cmake -S D:/a/lab_work_6/lab_work_6 -B D:/a/lab_work_6/lab_work_6/_build
-          cmake --build _build
-      - name: Make art
-        run: |
-          cd _build
-          cpack -G "NSIS"
-          cpack -G "ZIP"
-          cd ..
-      - name: Load
-        uses: actions/upload-artifact@v4
-        with:
-          name: at2
-          path: _build/bank-*
+          name: rep
+          path: /home/runner/work/LR_8/LR_8/log.txt
 

@@ -1,22 +1,68 @@
-name: Test
-run-name: None
+name: Run
+run-name: R
 on: [push]
 jobs:
-  compile_on_ubuntu:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Test
+      - name: Build
         run: |
           cmake -H. -B_build
           cmake --build _build
           cmake --build _build --target test -- ARGS=--verbose
-      - name: Generate and send a code coverage report to Coveralls
+      - name: Report to Coveralls
         uses: threeal/gcovr-action@v1.0.0
         with:
           excludes: third-party
           coveralls-send: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
+  lf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build
+        run: |
+          cmake -H. -B_build
+          cmake --build _build
+      - name: packages
+        run: |
+          cd _build
+          cpack -G "TGZ"          
+          cpack -G "DEB"
+          cpack -G "RPM"
+          cd ..
+      - name: Load
+        uses: actions/upload-artifact@v4
+        with:
+          name: at1
+          path: _build/bank_lib-*
+  wf:
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build
+        run: |
+          cmake -S D:/a/LR_6/LR_6 -B D:/a/LR_6/LR_6/_build
+          cmake --build _build
+      - name: Make art
+        run: |
+          cd _build
+          cpack -G "NSIS"
+          cpack -G "ZIP"
+          cd ..
+      - name: Load
+        uses: actions/upload-artifact@v4
+        with:
+          name: at2
+          path: _build/bank_lib-*
+
